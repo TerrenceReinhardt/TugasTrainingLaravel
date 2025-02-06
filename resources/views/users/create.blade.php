@@ -75,7 +75,7 @@
             <h2>Add New User</h2>
         </div>
         @if(session('success'))
-            <div style="color: green; font-weight: bold; margin-bottom: 10px;">
+            <div style="color: green; font-weight: bold; margin-bottom: 10px;" id="alert-success">
             {{ session('success') }}
         </div>
         @endif
