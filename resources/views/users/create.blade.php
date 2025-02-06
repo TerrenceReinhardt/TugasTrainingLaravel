@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -67,6 +67,16 @@
         .back-link:hover {
             text-decoration: underline;
         }
+        /* Style for success message */
+        #alert-success {
+            display: none;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border-radius: 5px;
+            margin-top: 15px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -74,22 +84,24 @@
         <div class="header">
             <h2>Add New User</h2>
         </div>
+
         @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
+            <div id="alert-success">
+                {{ session('success') }}
+            </div>
         @endif
 
         @if(session('error'))
             <div style="color: red; font-weight: bold; margin-bottom: 10px;">
-            {{ session('error') }}
-        </div>
+                {{ session('error') }}
+            </div>
         @endif
+
         <form action="{{ route('users.store') }}" method="POST">
             @csrf
             <label for="name">Name:</label>
             <input type="text" id="name" name="name" required>
-            
+
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" required>
 
@@ -97,5 +109,17 @@
         </form>
         <a href="{{ route('users.index') }}" class="back-link">Back to User List</a>
     </div>
+
+    <script>
+        // Display the success message for a few seconds and then hide it
+        @if(session('success'))
+            setTimeout(function() {
+                $('#alert-success').fadeOut();
+            }, 5000);  // hide after 5 seconds
+        @endif
+    </script>
 </body>
 </html>
+
+
+

@@ -73,10 +73,50 @@
             color: red;
             font-weight: bold;
         }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .btn-edit, .btn-delete {
+            padding: 5px 10px;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-edit {
+            background-color: #28a745;
+        }
+        .btn-delete {
+            background-color: #dc3545;
+        }
+        .alert {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- Display success or error messages -->
+        @if(session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @elseif(session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+        @endif
+
         <div class="header">
             <h2>User List</h2>
             <a href="{{ route('users.create') }}" class="add-user">Add User</a>
@@ -88,30 +128,56 @@
                     <th>Name</th>
                     <th>Email</th>
                     <th>Status</th>
+                    <th>Actions</th> <!-- Add the Actions header here -->
                 </tr>
             </thead>
             <tbody>
                 @foreach($users as $user)
-                <tr>
+                <tr data-id="{{ $user->id }}">
                     <td>{{ $user->name }}</td>
                     <td>{{ $user->email }}</td>
                     <td class="{{ $user->status == 'Success' ? 'status-success' : 'status-failed' }}">
                         {{ $user->status }}
+                    </td>
+                    <td class="action-buttons">
+                        <a href="{{ route('users.edit', $user->id) }}" class="btn-edit">Edit</a>
+                        <form action="{{ route('users.destroy', $user->id) }}" method="POST" class="delete-form" style="display:inline;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn-delete" onclick="return confirm('Are you sure you want to delete this user?')">Delete</button>
+                        </form>
                     </td>
                 </tr>
                 @endforeach
             </tbody>
         </table>
     </div>
+
     <script>
         $(document).ready(function() {
-            $('#usersTable').DataTable({
+            // Initialize DataTable
+            var table = $('#usersTable').DataTable({
                 "paging": true,
                 "searching": true,
                 "info": true,
-                "pageLength": 10
+                "pageLength": 10,
+                "columnDefs": [
+                    { "targets": -1, "orderable": false } // Disable sorting on the last column (Actions)
+                ]
+            });
+
+            // Handling delete action
+            $('form.delete-form').submit(function(event) {
+                event.preventDefault();
+                var form = $(this);
+                if (confirm('Are you sure you want to delete this user?')) {
+                    form[0].submit();
+                }
             });
         });
     </script>
 </body>
 </html>
+
+
+

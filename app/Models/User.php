@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Http\Request;
 
 class User extends Authenticatable
 {
@@ -53,19 +54,13 @@ class User extends Authenticatable
     }
     public function store(Request $request)
     {
-    // Validate the data
     $request->validate([
         'name' => 'required|string|max:255',
-        'email' => 'required|email|unique:users,email',
+        'email' => 'required|email|unique:users,email'
     ]);
 
-    // Create the new user
-    $user = User::create([
-        'name' => $request->name,
-        'email' => $request->email,
-    ]);
+    User::create($request->only('name', 'email'));
 
-    // Redirect back to the index page with a success message
-    return redirect()->route('users.index')->with('success', 'User added successfully');
+    return redirect()->back()->with('success', 'User added successfully!');
     }
 }
